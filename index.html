@@ -3,166 +3,253 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Parallel Lab — Devin playbooks for the AI x Science Hackathon</title>
-<meta name="description" content="One-click Devin playbooks for the London AI x Science Hackathon: run a Parallel Lab of 5+ Devin sessions, with Modal, Hugging Face, Paperclip and Amass.">
+<title>Parallel Lab · Devin at the AI x Science Hackathon</title>
+<meta name="description" content="Devin playbooks for the London AI x Science Hackathon. Run five or more Devin sessions in parallel, one idea each, with GPU work on Modal.">
+<link rel="icon" href="assets/devin-mark-white.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#07090d; --panel:#0e1219; --panel2:#131924; --line:#1f2733;
-  --fg:#e8ecf2; --mut:#8e9bad; --accent:#4d7cff; --accent2:#7aa2ff; --ok:#3ddc97;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --black:#000;--ink:#191919;--fg-2:rgba(25,25,25,.56);--fg-3:rgba(25,25,25,.40);
+  --white:#fff;--beige:#f7f6f5;--surface-2:#f8f8f8;--border:#e7e7e7;--border-on-light:rgba(0,0,0,.08);
+  --blue:#317cff;--green:#00a558;--orange:#f58e3a;
+  --shadow-xs:0 1px 2px 0 rgba(0,0,0,.05);
+  --shadow-md:0 4px 6px -2px rgba(0,0,0,.05),0 10px 15px -3px rgba(0,0,0,.10);
+  --font-display:"NB International Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--fg);
-  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
-  -webkit-font-smoothing:antialiased}
-a{color:var(--accent2);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
-header.top{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
-  background:rgba(7,9,13,.8);border-bottom:1px solid var(--line)}
-header.top .wrap{display:flex;align-items:center;gap:16px;height:60px}
-.brand{font-weight:650;letter-spacing:-.01em}
-.brand span{color:var(--mut);font-weight:400}
-header.top nav{margin-left:auto;display:flex;gap:20px;font-size:14px;color:var(--mut)}
-header.top nav a{color:var(--mut)}
-.hero{padding:76px 0 56px;border-bottom:1px solid var(--line);
-  background:radial-gradient(900px 420px at 18% -8%,rgba(77,124,255,.18),transparent 60%)}
-.kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent2);border:1px solid rgba(122,162,255,.35);border-radius:999px;padding:5px 12px}
-h1{font-size:clamp(30px,5.4vw,52px);overflow-wrap:break-word;line-height:1.08;margin:20px 0 14px;letter-spacing:-.03em}
-h1 em{font-style:normal;color:var(--accent2)}
-.lede{font-size:18px;color:var(--mut);max-width:62ch;margin:0}
-.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:30px}
-.btn{display:inline-flex;align-items:center;gap:9px;border-radius:10px;padding:13px 20px;
-  font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;line-height:1}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#3b6bf5;text-decoration:none}
-.btn-ghost{background:transparent;border-color:var(--line);color:var(--fg)}
-.btn-ghost:hover{border-color:#2d3a4d;text-decoration:none}
-.btn-sm{padding:9px 14px;font-size:13.5px;border-radius:8px}
-.hint{font-size:13.5px;color:var(--mut)}
-section{padding:60px 0;border-bottom:1px solid var(--line)}
-h2{font-size:26px;letter-spacing:-.02em;margin:0 0 8px}
-.sub{color:var(--mut);margin:0 0 30px;max-width:70ch}
-h3{font-size:16px;margin:0 0 6px}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}
-@media(max-width:900px){.steps{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.steps{grid-template-columns:1fr}}
-.step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
-.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;
-  width:26px;height:26px;border-radius:7px;background:rgba(77,124,255,.16);color:var(--accent2);
-  font-size:13px;font-weight:700;margin-bottom:12px}
-.step p{margin:0;color:var(--mut);font-size:14.5px}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;
-  display:flex;flex-direction:column;gap:12px}
-.card.core{border-color:rgba(77,124,255,.4);background:linear-gradient(180deg,var(--panel2),var(--panel))}
-.card .macro{font-family:var(--mono);font-size:12.5px;color:var(--accent2)}
-.card p{margin:0;color:var(--mut);font-size:14.5px;flex:1}
-.card .row{display:flex;gap:6px;flex-wrap:nowrap}
-.card .row .btn-sm{padding:8px 11px;font-size:13px}
-.badge{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ok);
-  border:1px solid rgba(61,220,151,.35);border-radius:999px;padding:3px 9px;align-self:flex-start}
-table{width:100%;border-collapse:collapse;font-size:14.5px}
-th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{color:var(--mut);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
-code{font-family:var(--mono);font-size:13px;background:var(--panel2);border:1px solid var(--line);
-  border-radius:5px;padding:1.5px 6px}
-ul.check{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-ul.check li{padding-left:28px;position:relative;color:var(--mut);font-size:15px}
-ul.check li::before{content:"";position:absolute;left:4px;top:8px;width:8px;height:8px;
-  border-radius:50%;background:var(--accent)}
-ul.check li b{color:var(--fg);font-weight:600}
-footer{padding:40px 0 60px;color:var(--mut);font-size:14px}
-.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,24px);opacity:0;
-  background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 18px;
-  font-size:14px;transition:.22s;pointer-events:none;z-index:50}
+body{margin:0;overflow-x:hidden;background:var(--beige);color:var(--ink);
+  font:400 16px/1.5 var(--font-sans);-webkit-font-smoothing:antialiased}
+a{color:var(--ink)}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:rgba(247,246,245,.86);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,.07)}
+.nav .wrap{height:60px;display:flex;align-items:center;gap:28px}
+.nav img{height:22px;display:block}
+.nav .links{display:flex;gap:24px;margin-left:12px}
+.nav .links a{font-size:14px;text-decoration:none}
+.nav .links a:hover{color:var(--blue)}
+.nav .right{margin-left:auto}
+
+/* buttons: square, black */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:0;cursor:pointer;
+  font:500 14px/1.2 var(--font-display);padding:9px 18px;border:1px solid transparent;text-decoration:none;
+  white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.btn-lg{font-size:16px;padding:13px 22px}
+.btn-sm{font-size:13px;padding:7px 12px}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:#363636}
+.btn-outline{background:transparent;color:var(--ink);border-color:rgba(0,0,0,.18)}
+.btn-outline:hover{background:rgba(0,0,0,.04)}
+.btn-ghost{background:transparent;color:var(--ink)}
+.btn-ghost:hover{background:rgba(0,0,0,.05)}
+.inv.btn-primary{background:#fff;color:#000}
+.inv.btn-primary:hover{background:#e7e7e7}
+.inv.btn-outline{color:#fff;border-color:rgba(255,255,255,.4)}
+.inv.btn-outline:hover{background:rgba(255,255,255,.1)}
+.arrow::after{content:"→";font-family:var(--font-sans)}
+
+/* type */
+.label{display:inline-flex;align-items:center;gap:12px;font:400 12px/1 var(--font-mono);letter-spacing:.04em;
+  text-transform:uppercase;color:var(--fg-2)}
+.label::before{content:"";width:7px;height:7px;background:var(--blue);flex:none}
+.dark .label{color:rgba(255,255,255,.6)}
+h1,h2,h3{font-family:var(--font-display);font-weight:500;letter-spacing:-.03em;margin:0;color:var(--black)}
+h1{font-size:clamp(40px,7vw,68px);line-height:1}
+h2{font-size:clamp(28px,4vw,38px);line-height:1.08}
+h2 span,h1 span{color:var(--fg-3)}
+h3{font-size:19px;letter-spacing:-.02em;line-height:1.25}
+.body{color:var(--fg-2);font-size:16px;line-height:1.5;margin:0}
+.lede{font-size:19px;max-width:600px}
+code{font:400 13px/1.4 var(--font-mono);background:rgba(0,0,0,.05);padding:1px 5px}
+.dark code{background:rgba(255,255,255,.1)}
+
+/* hero */
+.hero{padding:72px 0 0;text-align:center}
+.pill{display:inline-flex;align-items:center;gap:10px;padding:6px 14px;border:1px solid rgba(0,0,0,.1);
+  border-radius:999px;background:rgba(255,255,255,.6);font-size:13px}
+.pill b{font-weight:500;color:var(--blue)}
+.hero h1{margin-top:26px}
+.hero .lede{margin:22px auto 0}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.cta-note{margin-top:14px;font-size:13px;color:var(--fg-3)}
+
+/* product frame mock */
+.frame{margin:56px auto 0;max-width:980px;background:#fff;border:1px solid var(--border-on-light);
+  border-radius:12px;box-shadow:var(--shadow-md);overflow:hidden;text-align:left}
+.frame .bar{height:38px;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid var(--border);background:#fcfcfc}
+.frame .bar i{width:11px;height:11px;border-radius:50%;background:#e2e2e2;display:block}
+.frame .bar span{margin-left:12px;font:500 12px/1 var(--font-sans);color:var(--fg-2)}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px;background:#fcfcfc}
+.col{background:var(--surface-2);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:220px}
+.col h4{margin:2px 4px 4px;font:500 12px/1 var(--font-sans);color:var(--fg-2);display:flex;gap:8px;align-items:center}
+.col h4 em{font-style:normal;color:var(--fg-3)}
+.sess{background:#fff;border:1px solid var(--border-on-light);border-radius:6px;box-shadow:var(--shadow-xs);padding:10px 11px}
+.sess .t{font:500 13px/18px var(--font-sans);color:var(--ink)}
+.sess .m{display:flex;align-items:center;gap:6px;margin-top:6px;font:400 12px/16px var(--font-mono);color:var(--fg-2)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.dot.run{background:var(--orange)} .dot.pr{background:var(--green)} .dot.blue{background:var(--blue)}
+
+/* sections */
+section{padding:120px 0 0}
+.head{display:flex;flex-direction:column;gap:18px;max-width:640px;margin-bottom:44px}
+.grid{display:grid;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.grid.g4{grid-template-columns:repeat(4,1fr)}
+.grid.g3{grid-template-columns:repeat(3,1fr)}
+.cell{background:var(--beige);padding:28px 26px;display:flex;flex-direction:column;gap:12px}
+.cell .num{font:400 12px/1 var(--font-mono);color:var(--fg-3)}
+.cell .body{font-size:14.5px}
+.cell .row{display:flex;gap:6px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+.cell.feat{background:#fff}
+.tag{align-self:flex-start;font:400 11px/1 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;
+  color:var(--blue);border:1px solid rgba(49,124,255,.35);padding:4px 7px}
+.macro{font:400 12.5px/1 var(--font-mono);color:var(--fg-2)}
+
+table{width:100%;border-collapse:collapse;font-size:14.5px;background:#fff;border:1px solid var(--border)}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font:400 11.5px/1 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--fg-2);background:var(--surface-2)}
+td a{color:var(--blue);text-decoration:none}
+td a:hover{text-decoration:underline}
+
+/* dark band */
+.dark{background:var(--ink);color:#fff;margin-top:120px;padding:110px 0}
+.dark h2{color:#fff}
+.dark h2 span{color:rgba(255,255,255,.45)}
+.dark .body{color:rgba(255,255,255,.6)}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.12);margin-top:44px}
+.checks div{background:var(--ink);padding:24px 22px;display:flex;flex-direction:column;gap:10px}
+.checks b{font:500 16px/1.3 var(--font-display);letter-spacing:-.01em}
+.checks p{margin:0;font-size:14px;color:rgba(255,255,255,.6)}
+.checks i{font:400 12px/1 var(--font-mono);font-style:normal;color:var(--blue)}
+
+footer{background:var(--ink);color:rgba(255,255,255,.6);border-top:1px solid rgba(255,255,255,.1);padding:40px 0}
+footer .wrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap;font-size:14px}
+footer img{height:22px}
+footer a{color:rgba(255,255,255,.6);text-decoration:none}
+footer a:hover{color:#fff}
+footer .by{margin-left:auto;font:400 12px/1 var(--font-mono)}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);opacity:0;background:var(--ink);color:#fff;
+  padding:11px 16px;font-size:14px;transition:.18s ease-out;pointer-events:none;z-index:50}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-@media(max-width:640px){header.top nav{display:none}.hero{padding:52px 0 40px}}
+
+@media(max-width:960px){.grid.g4{grid-template-columns:repeat(2,1fr)}.grid.g3{grid-template-columns:repeat(2,1fr)}
+  .nav .links{display:none}}
+@media(max-width:640px){.wrap{padding:0 20px}.grid.g4,.grid.g3{grid-template-columns:1fr}
+  .board{grid-template-columns:1fr}.col{min-height:0}section{padding-top:88px}.dark{margin-top:88px;padding:80px 0}
+  .hero{padding-top:48px}.nav .right .btn{display:none}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap">
-  <div class="brand">Parallel Lab <span>/ Devin playbooks</span></div>
-  <nav>
-    <a href="#start">Quickstart</a>
-    <a href="#playbooks">Playbooks</a>
-    <a href="#secrets">Secrets</a>
-    <a href="#judging">Judging</a>
-  </nav>
-</div></header>
 
-<div class="hero"><div class="wrap">
-  <span class="kicker">Best use of Devin · side challenge</span>
-  <h1>A real research group doesn't<br>test <em>one idea at a time</em>.</h1>
-  <p class="lede">Use Devin as your team's research engineers. These playbooks launch 5+ Devin sessions in
-  parallel, each testing a different idea for your track problem, each ending in its own PR with a measured
-  result and GPU work on Modal. Your team keeps the direction and the judgment.</p>
-  <div class="cta">
-    <a class="btn btn-primary" id="install-all" href="#">Add all 7 playbooks to Devin</a>
-    <a class="btn btn-ghost" href="#playbooks">Browse playbooks</a>
-    <span class="hint">Opens a Devin session that saves them into your own org, macros included.</span>
+<div class="nav"><div class="wrap">
+  <a href="#"><img src="assets/devin-logo.svg" alt="Devin"></a>
+  <div class="links">
+    <a href="#start">Quickstart</a><a href="#playbooks">Playbooks</a><a href="#secrets">Secrets</a><a href="#challenge">Challenge</a>
   </div>
+  <div class="right"><a class="btn btn-primary btn-sm js-install" href="#">Add all playbooks</a></div>
 </div></div>
 
+<header class="hero"><div class="wrap">
+  <span class="pill">London AI x Science Hackathon <b>Best use of Devin</b></span>
+  <h1>Run a Parallel Lab.<br><span>Not one idea at a time.</span></h1>
+  <p class="body lede">Real research groups don't test one hypothesis at a time. Point five or more Devins at your
+    track problem, one idea each. Every session ends in a PR with a measured result, and GPU work runs on Modal.
+    You set the direction and judge the results.</p>
+  <div class="cta">
+    <a class="btn btn-primary btn-lg js-install" href="#">Add all 7 playbooks to Devin</a>
+    <a class="btn btn-outline btn-lg" href="#playbooks">Browse playbooks</a>
+  </div>
+  <div class="cta-note">Opens one Devin session that saves every playbook into your org, macros included.</div>
+
+  <div class="frame" aria-hidden="true">
+    <div class="bar"><i></i><i></i><i></i><span>!parallel_lab · Polaron batch QC</span></div>
+    <div class="board">
+      <div class="col"><h4><span class="dot run"></span>Running <em>3</em></h4>
+        <div class="sess"><div class="t">Self-supervised SEM embeddings + shift test</div><div class="m"><span class="dot run"></span>lab/sem-embed · Modal L40S</div></div>
+        <div class="sess"><div class="t">Conformal accept / investigate / reject</div><div class="m"><span class="dot run"></span>lab/conformal · CPU</div></div>
+        <div class="sess"><div class="t">Anomaly detection vs baseline batch</div><div class="m"><span class="dot run"></span>lab/anomaly · Modal L4</div></div>
+      </div>
+      <div class="col"><h4><span class="dot pr"></span>PR is ready <em>2</em></h4>
+        <div class="sess"><div class="t">Classical microstructure KPIs</div><div class="m"><span class="dot pr"></span>acc 0.81 ± 0.03 · +0.09</div></div>
+        <div class="sess"><div class="t">Per-KPI attribution for explanations</div><div class="m"><span class="dot pr"></span>negative result · kept</div></div>
+      </div>
+      <div class="col"><h4><span class="dot blue"></span>Lead session <em>1</em></h4>
+        <div class="sess"><div class="t">Frozen split, eval script and baseline</div><div class="m"><span class="dot pr"></span>merged to main</div></div>
+        <div class="sess"><div class="t">Leaderboard PR</div><div class="m"><span class="dot blue"></span>waiting on 3 sessions</div></div>
+      </div>
+    </div>
+  </div>
+</div></header>
+
 <section id="start"><div class="wrap">
-  <h2>Quickstart</h2>
-  <p class="sub">About 5 minutes from here to five experiments running in parallel.</p>
-  <div class="steps">
-    <div class="step"><h3>Install the playbooks</h3><p>Click the button above. Devin saves all 7 into your
-      org with their macros. One session, no copy-paste.</p></div>
-    <div class="step"><h3>Add your secrets</h3><p>In Devin, go to Settings &rarr; Secrets and add your Modal
-      token. Child sessions can only see secrets saved there, never ones pasted into chat.</p></div>
-    <div class="step"><h3>Prepare the repo</h3><p>Run <code>!hack_setup</code> on your team repo. It installs
-      the sponsors' official agent skills so every later session inherits them.</p></div>
-    <div class="step"><h3>Run the lab</h3><p>Run <code>!parallel_lab</code> with your track problem, metric
-      and 5+ ideas. You get a PR per idea and one leaderboard PR.</p></div>
+  <div class="head">
+    <span class="label">Quickstart</span>
+    <h2>Five minutes.<br><span>Then five experiments.</span></h2>
+  </div>
+  <div class="grid g4">
+    <div class="cell"><span class="num">01</span><h3>Add the playbooks.</h3><p class="body">Click "Add all 7 playbooks". One Devin session saves them all into your org. No copy-paste.</p></div>
+    <div class="cell"><span class="num">02</span><h3>Add your secrets.</h3><p class="body">Add your Modal token under Settings &rarr; Secrets. Child sessions only see saved secrets, never ones pasted into chat.</p></div>
+    <div class="cell"><span class="num">03</span><h3>Prepare the repo.</h3><p class="body">Run <code>!hack_setup</code>. It installs the sponsors' official agent skills, and every later session inherits them.</p></div>
+    <div class="cell"><span class="num">04</span><h3>Run the lab.</h3><p class="body">Run <code>!parallel_lab</code> with your problem, metric and 5+ ideas. You get one PR per idea and a leaderboard.</p></div>
   </div>
 </div></section>
 
 <section id="playbooks"><div class="wrap">
-  <h2>The playbooks</h2>
-  <p class="sub">Each "Create in Devin" button opens Devin's new-playbook page with the full text filled in;
-  press Save and it's yours. DeepMind and Anthropic tools are deliberately out of scope here.</p>
-  <div class="cards" id="cards"></div>
+  <div class="head">
+    <span class="label">Playbooks</span>
+    <h2>One lab.<br><span>Every sponsor tool.</span></h2>
+    <p class="body">"Create in Devin" opens Devin's new-playbook page with the full text already filled in. Press Save. DeepMind and Anthropic tools are left out on purpose.</p>
+  </div>
+  <div class="grid g3" id="cards"></div>
 </div></section>
 
 <section id="secrets"><div class="wrap">
-  <h2>Sponsor credits and secrets</h2>
-  <p class="sub">Add these in Devin under Settings &rarr; Secrets, using these exact names, before you launch
-  parallel sessions. Only Modal is required for the challenge.</p>
+  <div class="head">
+    <span class="label">Credits &amp; secrets</span>
+    <h2>Save them once.<br><span>Every session inherits them.</span></h2>
+    <p class="body">Add these in Devin under Settings &rarr; Secrets, using these exact names. Only Modal is required for the challenge.</p>
+  </div>
   <div style="overflow-x:auto"><table>
-    <tr><th>Tool</th><th>Secret names</th><th>Where to get it</th><th>Credit</th></tr>
-    <tr><td><b>Modal</b> (required for GPU work)</td><td><code>MODAL_TOKEN_ID</code><br><code>MODAL_TOKEN_SECRET</code></td>
-      <td><a href="https://modal.com/settings/tokens">modal.com/settings/tokens</a></td><td>$150 per builder</td></tr>
-    <tr><td><b>Hugging Face</b></td><td><code>HF_TOKEN</code> (write)</td>
-      <td><a href="https://huggingface.co/settings/tokens">huggingface.co/settings/tokens</a></td><td>Coupon credit for Jobs + ZeroGPU</td></tr>
-    <tr><td><b>Paperclip by GXL</b></td><td><code>PAPERCLIP_API_KEY</code></td>
-      <td><a href="https://paperclip.gxl.ai/keys">paperclip.gxl.ai/keys</a></td><td>Free unlimited at the event</td></tr>
-    <tr><td><b>Amass</b></td><td><code>AMASS_API_KEY</code></td>
-      <td><a href="https://platform.amass.tech">platform.amass.tech</a> &rarr; API Keys</td><td>$500 per team</td></tr>
+    <tr><th>Tool</th><th>Secret names</th><th>Get it</th><th>Credit</th></tr>
+    <tr><td><b>Modal</b> &middot; required</td><td><code>MODAL_TOKEN_ID</code><br><code>MODAL_TOKEN_SECRET</code></td><td><a href="https://modal.com/settings/tokens">modal.com/settings/tokens</a></td><td>$150 per builder</td></tr>
+    <tr><td><b>Hugging Face</b></td><td><code>HF_TOKEN</code> (write)</td><td><a href="https://huggingface.co/settings/tokens">huggingface.co/settings/tokens</a></td><td>Coupon for Jobs + ZeroGPU</td></tr>
+    <tr><td><b>Paperclip by GXL</b></td><td><code>PAPERCLIP_API_KEY</code></td><td><a href="https://paperclip.gxl.ai/keys">paperclip.gxl.ai/keys</a></td><td>Free, unlimited at the event</td></tr>
+    <tr><td><b>Amass</b></td><td><code>AMASS_API_KEY</code></td><td><a href="https://platform.amass.tech">platform.amass.tech</a> &rarr; API Keys</td><td>$500 per team</td></tr>
   </table></div>
 </div></section>
 
-<section id="judging"><div class="wrap">
-  <h2>What the challenge asks for</h2>
-  <p class="sub">Run <code>!parallel_lab</code> and you produce all of this by default.</p>
-  <ul class="check">
-    <li><b>5+ Devin sessions in parallel</b>, each on a different idea: a model, a method, an optimisation, an analysis.</li>
-    <li><b>Every session ends in a branch or PR with a result</b>, not an opinion: a metric from the team's shared eval script.</li>
-    <li><b>GPU work runs on Modal</b>, with the app link and cost recorded in the PR.</li>
-    <li><b>One comparable baseline and split</b> fixed before fan-out, so five results line up against each other.</li>
-    <li><b>A leaderboard PR</b> with deltas, uncertainty and the negative results kept in. That's your 2-minute demo.</li>
-  </ul>
-  <p class="sub" style="margin-top:26px">Idea starters for each track:
-    <a href="https://github.com/Zakee47/devin-ai-science-lab/blob/main/docs/track-ideas.md">track-ideas.md</a></p>
-</div></section>
+<div class="dark" id="challenge"><div class="wrap">
+  <div class="head">
+    <span class="label">The challenge</span>
+    <h2>Best use of Devin.<br><span>Run a Parallel Lab.</span></h2>
+    <p class="body">Use Devin as your team's research engineers, while your team focuses on direction and judgment. <code>!parallel_lab</code> covers every requirement by default.</p>
+  </div>
+  <div class="checks">
+    <div><i>01</i><b>5+ sessions in parallel.</b><p>Each one tests a different idea: a model, a method, an optimisation or an analysis.</p></div>
+    <div><i>02</i><b>A PR with a result.</b><p>Every session ends in a branch or PR, scored with the team's shared eval script.</p></div>
+    <div><i>03</i><b>GPU work on Modal.</b><p>Each PR records the Modal app link, GPU type and cost.</p></div>
+    <div><i>04</i><b>One leaderboard.</b><p>Deltas and uncertainty, with negative results kept in. That's your 2-minute demo.</p></div>
+  </div>
+  <div class="cta" style="justify-content:flex-start;margin-top:40px">
+    <a class="btn btn-primary btn-lg inv js-install" href="#">Add all 7 playbooks to Devin</a>
+    <a class="btn btn-outline btn-lg inv arrow" href="https://github.com/Zakee47/devin-ai-science-lab/blob/main/docs/track-ideas.md">Idea starters for each track</a>
+  </div>
+</div></div>
 
 <footer><div class="wrap">
-  <a href="https://github.com/Zakee47/devin-ai-science-lab">Source repo</a> ·
-  <a href="https://docs.devin.ai/product-guides/playbooks">Devin playbooks docs</a> ·
+  <img src="assets/devin-mark-white.svg" alt="Devin">
+  <a href="https://github.com/Zakee47/devin-ai-science-lab">Source</a>
+  <a href="https://docs.devin.ai/product-guides/playbooks">Playbooks docs</a>
   <a href="https://modal.com/docs">Modal docs</a>
+  <span class="by">Built with Devin</span>
 </div></footer>
 
 <div class="toast" id="toast"></div>
@@ -170,36 +257,34 @@ footer{padding:40px 0 60px;color:var(--mut);font-size:14px}
 const PLAYBOOKS = [{"name": "Run a Parallel Lab", "desc": "The challenge playbook. Builds one shared eval and baseline, then launches 5+ child Devins (one idea each), each ending in its own PR with a result. Finishes with a leaderboard PR.", "kind": "core", "macro": "!parallel_lab", "title": "Run a Parallel Lab (Best Use of Devin challenge)", "file": "06_parallel_lab.md", "content": "# Run a Parallel Lab (Best Use of Devin challenge)\n\n## Overview\nRun the team's research like a lab group: this session acts as lab lead and launches 5 or more managed Devins in parallel, each testing a different idea for the track problem (a model, a method, an optimisation, an analysis). Each child ends in its own branch and PR with a result, and GPU work runs on Modal. The lead then compiles a leaderboard PR so the team can spend its time on direction and judgment. It meets the Cognition side challenge rules: at least 5 parallel sessions, each ending in a PR with a result, with GPU work on Modal.\n\n## What's Needed From User\n- Team repo, ideally already set up with the \"Hackathon Repo Setup\" playbook so sponsor skills are in `.agents/skills/`.\n- Track and problem statement, plus the data location.\n- The primary metric and how it is computed.\n- 5 or more ideas, one line each. If the team gives fewer, propose the rest (optionally using the Paperclip literature playbook) and get them confirmed.\n- Devin org secrets `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET`, plus any others the ideas need (`HF_TOKEN`, `PAPERCLIP_API_KEY`, `AMASS_API_KEY`). Child sessions only see secrets saved in Devin, not ones pasted into chat.\n- Optional: ACU limit per child (default 15) and a wall-clock deadline (default 3 hours).\n\n## Procedure\n1. Check prerequisites: confirm each needed secret exists and run `modal token set ... && modal profile current`. If Modal auth fails, stop and ask; children would fail the same way.\n2. Build the shared harness on `main` before any fan-out, because comparable results matter more than any single result:\n   - `eval/evaluate.py`: a fixed data split (seeded, saved in `eval/splits.json`), the primary metric, and the uncertainty method (bootstrap CI or std over 3 seeds).\n   - `results/SCHEMA.md` and `results/baseline.json`: the simplest reasonable baseline, run once.\n   - `lab/IDEAS.md`: a table of slug, hypothesis, method, GPU needed (y/n) and expected signal.\n   Push to `main` (or merge a quick PR) so every child branches from the same harness.\n3. Start one managed Devin per idea, all at once, with the \"Parallel Lab Experiment\" playbook attached. Look up its playbook id by listing the org's playbooks and finding macro `!lab_experiment`; if it is missing, fall back to pasting that playbook's steps into each prompt. Give each child:\n   - the repo, branch `lab/<slug>`, idea text, metric, baseline value and deadline;\n   - an ACU limit and the tags `parallel-lab` and `lab-<slug>`;\n   - the rule: \"GPU work runs on Modal via `modal_app/<slug>.py`; evaluate only with `eval/evaluate.py`; write `results/<slug>.json` in the schema; open a PR titled `[lab] <slug>: <headline>`\".\n4. Share the session links with the team right away. The team spends its time on direction while the children run.\n5. Monitor the children together (wait for all, rather than polling each one). Answer a child's questions quickly. If a child is stuck or blows past its budget, message it once with a correction, then put it to sleep or terminate it and record why.\n6. When a child's PR arrives, check it: the metric came from `eval/evaluate.py` on the frozen split, the Modal run link is present, and the uncertainty is reported. Send back any PR that changed the split or the metric.\n7. Optionally run a second round: take the top 1-2 ideas, plus one combination of winners, and launch another round of children.\n8. Compile `lab/LEADERBOARD.md` on branch `lab/leaderboard`: one row per idea (slug, PR link, metric \u00b1 uncertainty, delta vs baseline, GPU-hours/cost, verdict \"promote / inconclusive / negative\"), a short \"what we learned\" section that includes negative results, and a plot `lab/leaderboard.png`. Open a PR.\n9. Report to the user with the leaderboard PR, all child PR links, the session links and total Modal spend.\n\n## Specifications\n- At least 5 child sessions ran in parallel, each tied to a distinct idea, branch and PR.\n- Every child PR contains `results/<slug>.json` that follows the schema, an updated `RESULTS.md` section, and (for GPU ideas) a Modal app link.\n- Every result is measured with the same `eval/evaluate.py` and split as the baseline.\n- The leaderboard PR links every child PR and reports uncertainty, not just point estimates.\n- Validation: re-run `eval/evaluate.py` on the best idea's saved predictions and confirm it matches the reported number.\n\n## Advice and Pointers\n- Good ideas differ in kind, not just hyperparameters. Mix a strong baseline tweak, a foundation-model approach, a data-centric idea, an uncertainty/calibration method and an analysis/interpretability idea.\n- Example ideas for tracks 1-4: https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/docs/track-ideas.md\n- Keep child prompts self-contained. Children can't see this session's files, only what is pushed to git.\n- If Modal capacity is slow, cheap ideas can drop to `L4`/`L40S`; record the GPU type in results so wall-clock comparisons stay fair.\n\n## Forbidden Actions\n- Do not let children modify `eval/`, `eval/splits.json` or `results/baseline.json`.\n- Do not merge child PRs into `main` without the team's approval. The leaderboard PR only links to them.\n- Do not run GPU workloads on Devin VMs.\n- Do not drop negative or inconclusive results from the leaderboard.\n"}, {"name": "Parallel Lab Experiment", "desc": "What each child session runs: one idea, one branch, one PR, scored only with the team's frozen eval script.", "kind": "core", "macro": "!lab_experiment", "title": "Parallel Lab Experiment (child session)", "file": "07_lab_experiment.md", "content": "# Parallel Lab Experiment (child session)\n\n## Overview\nRun one experiment as one member of a Parallel Lab: test a single idea against the team's frozen evaluation harness, run GPU work on Modal, and finish with a branch and PR that holds a comparable, honest result. The lab lead session normally starts this playbook and supplies the inputs below.\n\n## What's Needed From User\n- Repo, idea slug and branch name (`lab/<slug>`).\n- Idea description and hypothesis.\n- Primary metric, baseline value (from `results/baseline.json`) and deadline/ACU budget.\n- Devin secrets `MODAL_TOKEN_ID`/`MODAL_TOKEN_SECRET` (plus any tool keys the idea needs).\n\n## Procedure\n1. Clone the repo, check out `main`, then create `lab/<slug>`. Read `AGENTS.md`, `results/SCHEMA.md`, `eval/evaluate.py` and any skill in `.agents/skills/` relevant to the idea (e.g. `modal`, `hf-cli`, `paperclip`).\n2. Write a 5-line plan at the top of `lab/<slug>/NOTES.md`: hypothesis, change, expected effect, compute plan, stop condition.\n3. Implement the idea in `lab/<slug>/` (and `modal_app/<slug>.py` for GPU work). Keep changes out of `eval/` and the shared split.\n4. Smoke-test on a tiny subset (Modal `T4`/`L4` for GPU code) so a full run won't crash.\n5. Run the full experiment on Modal: explicit `gpu=` and `timeout=`, a named Volume for data/checkpoints, `--detach` for anything over ~20 min, and 3 seeds when the expected effect is small.\n6. Score only with `eval/evaluate.py` on the frozen split. Save predictions to the Volume or `lab/<slug>/preds.*` (if small).\n7. Write `results/<slug>.json` per the schema (metric, uncertainty, seeds, GPU type, wall-clock, estimated cost, Modal app URL, commit SHA). Append a section to `RESULTS.md`: result vs baseline, uncertainty, verdict (promote / inconclusive / negative), and one next step.\n8. Push and open a PR titled `[lab] <slug>: <metric> vs baseline <value>`. Its description should hold the hypothesis, result table, Modal link and caveats. Report the PR link to the lab lead (parent session).\n\n## Specifications\n- One idea, one branch, one PR.\n- The reported metric comes from `eval/evaluate.py` on the frozen split, with uncertainty or an explicit single-run caveat.\n- `results/<slug>.json` validates against `results/SCHEMA.md`.\n- Validation: a fresh `python eval/evaluate.py --preds <saved preds>` reproduces the reported number.\n\n## Advice and Pointers\n- A clean negative result is a valid outcome. Report it and stop instead of tuning until the deadline.\n- If the idea is unworkable as specified, message the parent with a one-line alternative before changing scope.\n- Stop when the stop condition hits or about 80% of the budget is used, then write up what you have.\n\n## Forbidden Actions\n- Do not edit `eval/`, `eval/splits.json` or `results/baseline.json`, and do not touch other ideas' directories.\n- Do not train on the evaluation split or tune on held-out data.\n- Do not merge into `main`.\n- Do not run GPU work on the Devin VM.\n"}, {"name": "Hackathon Repo Setup", "desc": "Run once per team repo. Installs the sponsors' official agent skills into .agents/skills/ and smoke-tests every tool, so all later sessions inherit them.", "kind": "core", "macro": "!hack_setup", "title": "Hackathon Repo Setup: Sponsor Tools + Agent Skills", "file": "01_hack_setup.md", "content": "# Hackathon Repo Setup: Sponsor Tools + Agent Skills\n\n## Overview\nGet a team repo ready for the London AI x Science Hackathon so that every Devin session working on it, including parallel child sessions, can use the sponsor tools (Modal, Hugging Face, Paperclip by GXL, Amass) without setting them up again. Several sponsors ship official agent skills (`SKILL.md`). Devin reads skills committed under `.agents/skills/`, so installing them once in the repo is enough for every future session.\n\n## What's Needed From User\n- GitHub repo for the project (new and empty is fine; the rules say no commits before the event).\n- Track (1 C3 Open Maths, 2 Originator, 3 Serova peptide-HLA, 4 Polaron materials QC) and a one-line problem statement.\n- Devin secrets for the tools the team will use (Settings > Secrets, saved org-wide so child sessions inherit them):\n  - Modal: `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`. Create at modal.com/settings/tokens after redeeming the $150 credit.\n  - Hugging Face: `HF_TOKEN` with write scope, from huggingface.co/settings/tokens, after redeeming the hackathon coupon.\n  - Paperclip: `PAPERCLIP_API_KEY` (`gxl_...`), from paperclip.gxl.ai/keys.\n  - Amass: `AMASS_API_KEY` (`amass_...`), from platform.amass.tech > API Keys, after team onboarding at amass.tech/onboarding/london-ai-science-hackathon.\n- Skip any tool the team won't use. Do not add DeepMind/Antigravity or Anthropic credentials here; those are used outside Devin.\n\n## Procedure\n1. Clone the repo. Create the branch `setup/sponsor-skills`.\n2. Install the Python CLIs: `pip install -U modal \"huggingface_hub[cli]\"`. Use `uv` if the repo already uses it.\n3. Install the official agent skills into the repo (all of them write to `.agents/skills/`):\n   - Modal: `modal skills install -y --no-docs`. Drop `--no-docs` only if the team wants the offline docs mirror committed.\n   - Hugging Face: `hf skills add` (installs `hf-cli`). Then add the workflow skills the track needs, e.g. `hf skills add huggingface-zerogpu`, `hf skills add huggingface-llm-trainer`, `hf skills add huggingface-datasets`, `hf skills add huggingface-trackio`. `hf skills list` shows the full list.\n   - Amass: `npx -y skills add amass-technologies/public-skills --skill amass-api -a codex -y --copy` (`-a codex` targets `.agents/skills/`; `'*'` would write into ~40 agent folders)\n   - Paperclip: install the CLI with `curl -fsSL https://paperclip.gxl.ai/install.sh -o /tmp/pc.sh && bash /tmp/pc.sh </dev/null`. The sign-in step needs a TTY and is expected to fail here; the API key replaces it. Then write the skill: `mkdir -p .agents/skills/paperclip && paperclip skill > .agents/skills/paperclip/SKILL.md`\n4. Delete any `.claude/skills` symlinks the installers created, unless the team also uses Claude Code.\n5. Run a smoke check for each tool whose secret exists, binding the secret to the command:\n   - `modal token set --token-id \"$MODAL_TOKEN_ID\" --token-secret \"$MODAL_TOKEN_SECRET\" && modal profile current`\n   - `hf auth whoami`\n   - `paperclip search -s arxiv \"neural network training speedrun\" -n 3`\n   - `curl -s \"https://api.amass.tech/api/v1/cores/biomedcore/records?query=peptide%20HLA&limit=2\" -H \"Authorization: Bearer $AMASS_API_KEY\" | head -c 400`\n6. Write `AGENTS.md` at the repo root (under 2 KB) covering: the track and problem statement, which sponsor tools are available and which skill covers each, the rule \"GPU work runs on Modal (or HF Jobs), never on the Devin VM\", and where results go (`results/`, `RESULTS.md`).\n7. Add `.gitignore` entries for data caches and checkpoints (`data/raw/`, `*.pt`, `*.ckpt`, `wandb/`, `.modal/`).\n8. Commit, push and open a PR titled \"Set up sponsor agent skills\". The PR description should include a table of tool / skill path / smoke-check result.\n\n## Specifications\n- `.agents/skills/` contains a `SKILL.md` for every tool the team enabled.\n- Every enabled tool's smoke check passes, or the PR clearly lists the missing secret.\n- No secret values appear in any committed file, log excerpt or PR text.\n- `AGENTS.md` exists and is short.\n\n## Advice and Pointers\n- The Modal and HF skills tell the agent to read live docs (`https://modal.com/llms.txt`, `hf <cmd> --help`), so these installs are small and stay current.\n- `hf skills add` with no name installs only `hf-cli`; workflow skills must be named explicitly.\n- HF Jobs only need a positive credit balance (the coupon counts). Hosting a ZeroGPU Space requires a PRO account. Calling an existing ZeroGPU Space works on free accounts, with a small daily quota.\n- Paperclip's `search` requires `-s <source>`, e.g. `-s pmc,biorxiv,arxiv`.\n- Paperclip and Amass also offer remote MCP servers (`https://paperclip.gxl.ai/mcp` with an `X-API-Key` header; `https://mcp.amass.tech/mcp` with OAuth). An org admin can add them under Settings > MCP Marketplace > Add custom MCP. The CLI and API paths above work without that.\n\n## Forbidden Actions\n- Do not commit secrets or write them into `AGENTS.md` or skill files.\n- Do not store DeepMind or Anthropic credentials in Devin.\n- Do not commit large datasets or model weights; use a Modal Volume or a HF dataset/model repo.\n"}, {"name": "GPU Experiment on Modal", "desc": "Dry run, then a real GPU job on Modal with volumes, seeds and detached runs. Returns a result JSON with cost and runtime.", "kind": "tool", "macro": "!modal_gpu", "title": "Run a GPU Experiment on Modal", "file": "02_modal_gpu.md", "content": "# Run a GPU Experiment on Modal\n\n## Overview\nRun a training, inference or evaluation job on Modal GPUs (the hackathon gives $150 credit per builder) and bring the result back into the repo as a reviewable PR. Use this for anything heavier than a quick CPU script: fine-tuning a protein language model, a NN speedrun, segmentation or embedding of microscopy images, batched inference with a foundation model.\n\n## What's Needed From User\n- Repo with the code or data-loading entry point (ideally already set up with the \"Hackathon Repo Setup\" playbook).\n- Devin secrets `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET`.\n- The experiment: what to run, the metric, and a budget (GPU type and maximum wall-clock or dollar spend). If none is given, use `L40S` and 30 minutes.\n- Data location: HF dataset id, URL, or local files to upload.\n\n## Procedure\n1. If `.agents/skills/modal/SKILL.md` exists, load it. Read the relevant pages from `https://modal.com/llms.txt` (append `.md` to doc URLs for plain text) rather than relying on memory, because the Modal API changes often.\n2. Authenticate: `modal token set --token-id \"$MODAL_TOKEN_ID\" --token-secret \"$MODAL_TOKEN_SECRET\"`, then `modal profile current`.\n3. Create a branch: `exp/<short-slug>`.\n4. Write `modal_app/<slug>.py`:\n   - Define a `modal.Image` with pinned versions (`.uv_pip_install(...)` or `.pip_install(...)`).\n   - Use `@app.function(gpu=\"<TYPE>\", timeout=<seconds>, volumes={\"/vol\": vol}, secrets=[...])`. The default timeout is 5 minutes, so always set it explicitly.\n   - Store data and checkpoints on a named Volume (`modal.Volume.from_name(\"<team>-<slug>\", create_if_missing=True)`) and call `vol.commit()` after writing.\n   - Pass tokens like `HF_TOKEN` with `modal.Secret.from_dict(...)` or a named Modal secret (`modal secret create`). Never hard-code them.\n   - Have a `@app.local_entrypoint()` that runs the job and writes `results/<slug>.json` locally.\n5. Do a dry run first: tiny data, a few steps, cheapest GPU (`T4` or `L4`). Fix errors before scaling up.\n6. Launch the real run. Use `modal run modal_app/<slug>.py` if it fits within the session; for long jobs use `modal run --detach ...`, note the app id, and check back with `modal app logs <app-id>`.\n7. Use `.map()` / `.starmap()` over a list of configs for sweeps or seeds instead of a Python loop. Run at least 3 seeds when a metric is close to a baseline.\n8. Pull artifacts back with `modal volume get <vol> <path> results/` (small files only) and write `results/<slug>.json` with the metric(s), config, GPU type, wall-clock, estimated cost and Modal app URL.\n9. Write `RESULTS.md` (or a section in it) covering: hypothesis, setup, result vs baseline with uncertainty (std over seeds or a CI), what went wrong, and the next step.\n10. Commit code and small result files, push, and open a PR titled `[exp] <slug>: <headline metric>`.\n\n## Specifications\n- The PR contains a runnable `modal_app/<slug>.py`, `results/<slug>.json` and an updated `RESULTS.md`.\n- The headline number has a stated baseline and an uncertainty estimate (or an explicit note that only one seed was run).\n- GPU type, runtime and approximate cost are recorded.\n- Validation: the dry run succeeded, and the real run's Modal app shows a completed state (link in the PR).\n\n## Advice and Pointers\n- GPU choice: `T4`/`L4` for debugging, `L40S` (48 GB) for most inference and fine-tuning, `A100-80GB`/`H100` only when memory or speed requires it. `H100` may be upgraded to H200 at no extra cost; use `H100!` to pin it when benchmarking speed.\n- Cache model weights on the Volume so retries don't re-download them.\n- Use `modal shell --volume <vol>` to inspect files interactively.\n- If the job will outlive the session, `--detach` is essential; otherwise the app stops when the client disconnects.\n- Credits are shared across a team member's runs. Stop stray apps with `modal app stop <app-id>`.\n\n## Forbidden Actions\n- Do not run GPU training on the Devin VM.\n- Do not launch multi-GPU (`:4`, `:8`) or B200/H200 runs without the user's approval.\n- Do not report a metric from the dry run as the result.\n"}, {"name": "Hugging Face Jobs + ZeroGPU", "desc": "Run HF Jobs, publish datasets and models to the Hub, and ship a Gradio demo Space for the final demo.", "kind": "tool", "macro": "!hf_jobs", "title": "Hugging Face: Jobs, Hub Artifacts and a ZeroGPU Demo", "file": "03_hf_jobs.md", "content": "# Hugging Face: Jobs, Hub Artifacts and a ZeroGPU Demo\n\n## Overview\nUse the Hugging Face hackathon coupon (about $20 of credit for HF Jobs and ZeroGPU) to run compute jobs on HF infrastructure, publish datasets/models/results to the Hub, and optionally ship a Gradio demo Space for the 2-minute demo. It works well alongside Modal: HF Jobs suit short, script-shaped runs and evals near Hub data, and Spaces give judges a live link.\n\n## What's Needed From User\n- Devin secret `HF_TOKEN` (write scope) for an account with the coupon redeemed (huggingface.co/coupons/claim/HuggingFace-AIxScienceHack).\n- HF namespace to publish to (username or org).\n- Which part is needed: (a) run a job, (b) publish artifacts, (c) build a demo Space. Any combination.\n\n## Procedure\n1. Load `.agents/skills/hf-cli/SKILL.md` if present. Otherwise run `hf skills add` and load it. For Spaces also run `hf skills add huggingface-zerogpu` (or `huggingface-spaces`); for fine-tuning, `hf skills add huggingface-llm-trainer`.\n2. Verify auth (`hf auth whoami`) and credit (`hf jobs hardware` lists flavours and prices).\n3. Jobs:\n   - Write a self-contained UV script `jobs/<slug>.py` with PEP 723 inline dependencies.\n   - Dry run on `cpu-basic` or `t4-small` with tiny inputs.\n   - Launch: `hf jobs uv run --flavor <flavor> --timeout 2h --secrets HF_TOKEN -d jobs/<slug>.py [args]`.\n   - Monitor with `hf jobs ps`, `hf jobs logs <id>`, `hf jobs inspect <id>`.\n   - The job filesystem is ephemeral. The script must push outputs to the Hub (a dataset repo such as `<ns>/<project>-results`, or a model repo) before exiting.\n4. Artifacts: publish processed datasets with `hf upload <ns>/<name> <path> --repo-type dataset` and models with `hf upload <ns>/<name> <path>`. Add a README card covering data provenance and licence (required by the hackathon rules on crediting and consent).\n5. Demo Space (ZeroGPU requires a PRO account on the owner; otherwise use CPU hardware or call a Modal endpoint from the Space):\n   - Create `space/app.py` (Gradio) and `space/requirements.txt`. Decorate GPU functions with `@spaces.GPU(duration=...)`. Load models at module import, outside the decorated function.\n   - Create the Space with `hf repos create <ns>/<space> --repo-type space --space-sdk gradio` and upload with `hf upload <ns>/<space> space/ --repo-type space`.\n   - Open the Space URL and confirm it builds and returns a correct output on an example input. Screenshot it.\n6. Record job ids, Hub URLs and the Space URL in `RESULTS.md`. Commit the scripts, push, and open a PR.\n\n## Specifications\n- Every job used for a reported number has a job id and a Hub location for its outputs.\n- Published Hub repos have a README card with source and licence.\n- A demo Space, if built, loads and returns a result on an example (screenshot in the PR).\n- Validation: `hf jobs inspect <id>` shows COMPLETED for the reported runs, and the Hub URLs resolve.\n\n## Advice and Pointers\n- Flavour names differ from Modal: e.g. `t4-small`, `l4x1`, `a10g-small`, `l40sx1`, `a100-large`, `h200`. Check `hf jobs hardware` for current prices.\n- The coupon is small, so put long or big training runs on Modal ($150) and use HF Jobs for evals, data processing and moderate fine-tunes.\n- ZeroGPU does not support `torch.compile`. Keep `duration` tight to save quota.\n- For the Polaron track, large microscopy stacks are better kept on a Modal Volume. Push only derived KPIs/embeddings to the Hub.\n\n## Forbidden Actions\n- Do not publish data the team has no right to share (check the track's data terms; Polaron/Serova data may be private). Use private repos when unsure.\n- Do not print or upload `HF_TOKEN`.\n"}, {"name": "Paperclip literature map", "desc": "Search 11M+ papers, extract baselines and exact numbers, and scope a reproduction target plus 5+ ideas to feed the Parallel Lab.", "kind": "tool", "macro": "!paperclip_lit", "title": "Literature Grounding and Paper Reproduction Scoping with Paperclip (GXL)", "file": "04_paperclip.md", "content": "# Literature Grounding and Paper Reproduction Scoping with Paperclip (GXL)\n\n## Overview\nUse Paperclip by GXL (free unlimited credits at the hackathon) to ground a project in the literature: find prior methods and baselines, pull exact numbers and settings from papers, and scope a \"reproduce, then push past it\" target. Paperclip exposes 11M+ papers (PMC, bioRxiv, medRxiv, arXiv), FDA documents, clinical trials, patents and UniProt/PDB/ChEMBL through a filesystem-style CLI. Its output feeds an experiment plan, which suits the Parallel Lab playbook.\n\n## What's Needed From User\n- Devin secret `PAPERCLIP_API_KEY` (create at paperclip.gxl.ai/keys).\n- The research question or the paper to reproduce (title, DOI, arXiv id, or a description).\n- Optional: how many candidate methods to return (default 5-8).\n\n## Procedure\n1. Install the CLI if `paperclip` is missing: `curl -fsSL https://paperclip.gxl.ai/install.sh -o /tmp/pc.sh && bash /tmp/pc.sh </dev/null`. The browser sign-in step fails without a TTY; that is expected. Export `PAPERCLIP_API_KEY` for every `paperclip` command.\n2. Load `.agents/skills/paperclip/SKILL.md`, or run `paperclip skill` and read it. It is the authoritative command guide.\n3. Search broadly with an explicit source, e.g. `paperclip search -s pmc,biorxiv,arxiv \"<question>\" -n 30`. Note the returned search id (`s_...`).\n4. Use `paperclip map --from <s_id> \"<extraction question>\"` to read results in parallel and extract the same fields from each: method, dataset, metric and value, compute, code link.\n5. Deep-read the 2-3 most relevant papers: `paperclip cat /papers/<id>/meta.json`, `paperclip grep -i \"<term>\" /papers/<id>/content.lines`, and the figures/supplements for exact hyperparameters.\n6. For protein/drug tracks, pull structured data with `paperclip sql` or `/proteins/` (UniProt, PDB, ChEMBL), e.g. HLA allele sequences or known binders.\n7. Write `docs/literature.md` containing: a comparison table (method, data, metric, reported value, code available, paper path/DOI); the reproduction target (one table/figure, its exact number, and the settings needed); and 5+ concrete \"push past it\" ideas, each with a hypothesis and a cheap first experiment.\n8. Commit, push and open a PR titled \"Literature map: <topic>\".\n\n## Specifications\n- Every number in `docs/literature.md` cites its source (DOI or Paperclip path) and the section/table it came from.\n- The reproduction target names a specific table or figure, a numeric value, and the dataset/split.\n- The ideas list is directly usable as input to the Parallel Lab playbook (one line per idea, with a metric).\n- Validation: spot-check the two most important numbers by grepping the source paper's `content.lines`.\n\n## Advice and Pointers\n- `search` fails without `-s`. Common sources: `pmc`, `biorxiv`, `medrxiv`, `arxiv`, `abstracts`, `trials`, `fda`, `proteins`.\n- Use `paperclip bash '<pipeline>'` for pipes on the server side.\n- `paperclip git init <topic>` creates a sticky paper collection, which helps keep a team's reading list in one place.\n- Track hints: C3 maths, search arXiv for Tao et al. problem lists and speedrun records; Serova, NetMHCstabpan and peptide-HLA stability benchmarks; Polaron, electrode microstructure characterisation and SEM-based QC; Originator, reward hacking and calibration evals for science agents.\n\n## Forbidden Actions\n- Do not invent citations or numbers. If Paperclip can't find it, say so.\n- Do not paste API keys into commands that get logged in committed files.\n"}, {"name": "Amass biomedical evidence", "desc": "Pull cited papers, trials, drugs and targets with a rate-limited, cached client. Every claim keeps its PMID or NCT id.", "kind": "tool", "macro": "!amass_evidence", "title": "Biomedical Evidence and Data with Amass", "file": "05_amass.md", "content": "# Biomedical Evidence and Data with Amass\n\n## Overview\nUse Amass (the hackathon gives $500 of API credit per team) to pull cited, structured biomedical evidence: publications (BiomedCore), clinical trials (TrialCore), drugs and molecules (DrugCore), FDA/EMA authorisations (RegulatoryCore), and genes/targets with druggability and safety signals (GeneCore). It suits Track 3 (peptide-HLA and immunotherapy context), Track 2 (building grounded evals and benchmarks for bio agents), and any project that needs traceable citations in its demo.\n\n## What's Needed From User\n- Devin secret `AMASS_API_KEY` (`amass_...`, from platform.amass.tech > API Keys, after team onboarding at amass.tech/onboarding/london-ai-science-hackathon).\n- The question or dataset to build (e.g. \"HLA-A*02:01 neoantigen trials and their papers\", \"a benchmark of 200 drug-target facts with citations\").\n\n## Procedure\n1. Load `.agents/skills/amass-api/SKILL.md` if present. Otherwise install it with `npx -y skills add amass-technologies/public-skills --skill amass-api -a codex -y --copy`. Also read the LLM quick reference: https://platform.amass.tech/documentation/for-ai-agents/llm-quick-reference\n2. Smoke-test auth: `curl -s \"https://api.amass.tech/api/v1/cores/biomedcore/records?query=<q>&limit=2\" -H \"Authorization: Bearer $AMASS_API_KEY\"`.\n3. Write a small client `tools/amass.py` with: bearer auth, reading from the `data` key, retry and exponential backoff on 429 using `Retry-After`, and on-disk JSON caching per request, so parallel sessions and reruns don't burn credit.\n4. Pick Cores to match the question. Search broadly, then fetch details by Amass ID. Convert external ids (PMID/DOI/NCT/ChEMBL) through the `lookup` endpoints first.\n5. Follow cross-core links (e.g. a trial's `referencesBiomedCore`) instead of matching records by title.\n6. Save outputs to `data/amass/<slug>.jsonl` (one record per line with `amassId`, source ids and the fields used) and a human-readable `docs/evidence_<slug>.md` where every claim cites its Amass ID and PMID/NCT.\n7. Commit the client, the data (if small and allowed) and the docs. Push and open a PR.\n\n## Specifications\n- Every fact used downstream links to an Amass ID plus a public id (PMID/DOI/NCT).\n- The client respects the 60 requests/60 s limit and caches responses.\n- Validation: re-fetch 3 random records by Amass ID and confirm the stored fields match.\n\n## Advice and Pointers\n- Responses are wrapped in `{\"data\": ...}`; errors use `{\"error\": {...}}`.\n- Don't request `include=fulltext` unless needed; it makes responses much larger.\n- The rate limit is per user+org, not per key, so parallel Devins share it. Use one cached client.\n- Batch lookups can fail item by item. Check each item for `error`.\n- `amass-biomedical-evidence-scout` and the other showcase skills run over the Amass MCP (OAuth). Use them only if an admin has connected `https://mcp.amass.tech/mcp` to Devin.\n\n## Forbidden Actions\n- Do not fabricate PMIDs, NCT ids or trial-paper links. Use only what the API returns.\n- Do not commit `AMASS_API_KEY` or raw full-text dumps.\n"}];
 const INSTALL_PROMPT = "Install the AI x Science Hackathon Devin playbooks into my organisation.\n\n1. Fetch https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/manifest.json\n2. For each entry in it, fetch the `url` to get the playbook markdown.\n3. Save each one as a playbook in my organisation, using its exact `title`, `macro` and fetched content, unchanged.\n4. Reply with the created playbooks and their links, and tell me which secrets I still need to add before running !parallel_lab: MODAL_TOKEN_ID and MODAL_TOKEN_SECRET, plus optionally HF_TOKEN, PAPERCLIP_API_KEY and AMASS_API_KEY.\n\nDo not edit the playbook text and do not create any other playbooks.";
 const REPO = "https://github.com/Zakee47/devin-ai-science-lab/blob/main/playbooks/";
+const install = "https://app.devin.ai/?prompt=" + encodeURIComponent(INSTALL_PROMPT);
+document.querySelectorAll('.js-install').forEach(a => { a.href = install; a.target = "_blank"; a.rel = "noopener"; });
 
-document.getElementById('install-all').href =
-  "https://app.devin.ai/?prompt=" + encodeURIComponent(INSTALL_PROMPT);
-
-const toast = (m) => {
-  const t = document.getElementById('toast');
-  t.textContent = m; t.classList.add('on');
-  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2600);
-};
+const toast = m => { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2400); };
 
 document.getElementById('cards').innerHTML = PLAYBOOKS.map(p => {
   const url = "https://app.devin.ai/settings/playbooks/create?body=" + encodeURIComponent(p.content);
-  return `<div class="card ${p.kind}">
-    ${p.kind === 'core' ? '<span class="badge">Start here</span>' : ''}
-    <div><h3>${p.name}</h3><div class="macro">${p.macro}</div></div>
-    <p>${p.desc}</p>
+  return `<div class="cell${p.kind === 'core' ? ' feat' : ''}">
+    ${p.kind === 'core' ? '<span class="tag">Start here</span>' : ''}
+    <h3>${p.name}</h3><span class="macro">${p.macro}</span>
+    <p class="body">${p.desc}</p>
     <div class="row">
       <a class="btn btn-primary btn-sm" href="${url}" target="_blank" rel="noopener">Create in Devin</a>
-      <button class="btn btn-ghost btn-sm" data-copy="${p.macro}">Copy</button>
+      <button class="btn btn-outline btn-sm" data-copy="${p.macro}">Copy</button>
       <a class="btn btn-ghost btn-sm" href="${REPO}${p.file}" target="_blank" rel="noopener">View</a>
     </div></div>`;
-}).join('');
+}).join('') + `<div class="cell"><span class="num">+</span><h3>Bring your own idea list.</h3>
+  <p class="body">Short on ideas? Run <code>!paperclip_lit</code> first. It maps the literature and hands back 5+ ideas, each with a metric, ready for the lab.</p></div>
+  <div class="cell"><span class="num">+</span><h3>Install everything at once.</h3>
+  <p class="body">One session saves all 7 playbooks into your org with their macros.</p>
+  <div class="row"><a class="btn btn-primary btn-sm js-install2" href="${install}" target="_blank" rel="noopener">Add all 7</a></div></div>`;
 
 document.addEventListener('click', e => {
-  const b = e.target.closest('[data-copy]');
-  if (!b) return;
+  const b = e.target.closest('[data-copy]'); if (!b) return;
   const p = PLAYBOOKS.find(x => x.macro === b.dataset.copy);
-  navigator.clipboard.writeText(p.content)
-    .then(() => toast('Copied "' + p.name + '" markdown to your clipboard'))
-    .catch(() => toast('Copy failed — use View instead'));
+  navigator.clipboard.writeText(p.content).then(() => toast('Copied ' + p.macro + ' playbook markdown'))
+    .catch(() => toast('Copy failed. Use View instead.'));
 });
 </script>
 </body>
