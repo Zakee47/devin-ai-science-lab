@@ -1,0 +1,39 @@
+{
+  "playbooks": [
+    {
+      "title": "Parallel Lab Experiment (child session)",
+      "macro": "!lab_experiment",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/07_lab_experiment.md"
+    },
+    {
+      "title": "Run a Parallel Lab (Best Use of Devin challenge)",
+      "macro": "!parallel_lab",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/06_parallel_lab.md"
+    },
+    {
+      "title": "Hackathon Repo Setup: Sponsor Tools + Agent Skills",
+      "macro": "!hack_setup",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/01_hack_setup.md"
+    },
+    {
+      "title": "Run a GPU Experiment on Modal",
+      "macro": "!modal_gpu",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/02_modal_gpu.md"
+    },
+    {
+      "title": "Hugging Face: Jobs, Hub Artifacts and a ZeroGPU Demo",
+      "macro": "!hf_jobs",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/03_hf_jobs.md"
+    },
+    {
+      "title": "Literature Grounding and Paper Reproduction Scoping with Paperclip (GXL)",
+      "macro": "!paperclip_lit",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/04_paperclip.md"
+    },
+    {
+      "title": "Biomedical Evidence and Data with Amass",
+      "macro": "!amass_evidence",
+      "url": "https://raw.githubusercontent.com/Zakee47/devin-ai-science-lab/main/playbooks/05_amass.md"
+    }
+  ]
+}
